@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GPON Monitoring Bot — KONNECT Staff User Guide</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --surface2: #1e2335;
+      --border: #2a3050;
+      --accent: #3b82f6;
+      --accent2: #06b6d4;
+      --green: #22c55e;
+      --red: #ef4444;
+      --orange: #f97316;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --tag-bg: #1e3a5f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .top-bar {
+      background: linear-gradient(90deg, #0d1b3e 0%, #0f2460 50%, #0d1b3e 100%);
+      border-bottom: 1px solid var(--accent);
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .top-bar .logo { font-weight: 800; font-size: 15px; color: #fff; letter-spacing: 0.15em; }
+    .top-bar .sep { color: var(--border); }
+    .badge {
+      background: var(--tag-bg); color: var(--accent2);
+      padding: 2px 9px; border-radius: 99px;
+      font-size: 11px; font-weight: 600; border: 1px solid var(--accent2);
+    }
+    .hero {
+      background: linear-gradient(135deg, #0d1b3e 0%, #101828 60%, #0a1628 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 32px 36px; max-width: 900px; margin: 0 auto;
+    }
+    .hero .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent2); margin-bottom: 10px; }
+    .hero h1 { font-size: 2rem; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 10px; }
+    .hero .subtitle { color: var(--muted); font-style: italic; font-size: 14px; }
+    .main { max-width: 900px; margin: 0 auto; padding: 40px 32px 80px; }
+    section { margin-bottom: 48px; }
+    .section-title {
+      font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--accent2); margin-bottom: 16px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    p { color: var(--text); margin-bottom: 12px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px 24px; margin-bottom: 16px;
+    }
+    .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .card-icon { font-size: 22px; line-height: 1; }
+    .card-title { font-weight: 700; font-size: 15px; color: #fff; }
+    .card p { color: var(--muted); font-size: 14px; margin-bottom: 0; }
+    .code-block {
+      background: #0a0e1a; border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 6px;
+      padding: 12px 16px; font-family: 'Consolas','Courier New',monospace;
+      font-size: 14px; color: #7dd3fc; margin: 10px 0 14px;
+    }
+    .faq-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; margin-bottom: 16px; overflow: hidden;
+    }
+    .faq-q {
+      background: var(--surface2); padding: 14px 20px;
+      font-weight: 700; font-size: 14px; color: #fff;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .faq-q .q-badge {
+      background: var(--accent); color: #fff; font-size: 11px;
+      padding: 2px 8px; border-radius: 4px; font-weight: 800; flex-shrink: 0;
+    }
+    .faq-a { padding: 16px 20px; }
+    .faq-a p { font-size: 14px; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+    th {
+      background: var(--surface2); color: var(--accent2); padding: 10px 14px;
+      text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    td { padding: 10px 14px; border-top: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    tr:hover td { background: rgba(59,130,246,0.04); }
+    .field-name { font-family: 'Consolas',monospace; color: #7dd3fc; font-size: 13px; }
+    .status-online { color: var(--green); font-weight: 700; }
+    .status-offline { color: var(--red); font-weight: 700; }
+    .mock-response {
+      background: #11141f; border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden; margin: 16px 0; font-size: 13px;
+    }
+    .mock-header {
+      background: var(--surface2); padding: 8px 16px; color: var(--muted);
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-red { background: #ef4444; } .dot-green { background: #22c55e; } .dot-yellow { background: #eab308; }
+    .mock-body {
+      padding: 16px 18px; font-family: 'Consolas','Courier New',monospace;
+      line-height: 1.9; color: var(--text);
+    }
+    .mock-body .at-mention { color: #60a5fa; font-weight: 700; }
+    .mock-body .field-key { color: var(--muted); }
+    .mock-body .field-val { color: #e2e8f0; }
+    .mock-body .onu-offline { color: var(--red); font-weight: 700; }
+    .mock-body .onu-online { color: var(--green); font-weight: 700; }
+    .mock-body .status-line { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
+    .steps { margin-top: 8px; }
+    .step-item { display: flex; gap: 16px; margin-bottom: 20px; }
+    .step-num {
+      flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; color: #fff; margin-top: 2px;
+    }
+    .step-content { flex: 1; }
+    .step-content strong { color: #fff; display: block; margin-bottom: 4px; }
+    .step-content p { color: var(--muted); font-size: 14px; margin-bottom: 0; }
+    .alert {
+      border-radius: 8px; padding: 14px 18px; font-size: 14px; margin: 14px 0; border-left: 4px solid;
+    }
+    .alert-info { background: rgba(59,130,246,0.08); border-color: var(--accent); color: #93c5fd; }
+    .alert-warning { background: rgba(249,115,22,0.08); border-color: var(--orange); color: #fdba74; }
+    .alert-success { background: rgba(34,197,94,0.08); border-color: var(--green); color: #86efac; }
+    .alert-tip { background: rgba(6,182,212,0.08); border-color: var(--accent2); color: #67e8f9; }
+    .alert strong { color: #fff; }
+    .new-badge {
+      display: inline-block; background: linear-gradient(90deg,#2563eb,#0891b2);
+      color: #fff; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 4px;
+      letter-spacing: 0.06em; text-transform: uppercase; vertical-align: middle; margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span class="logo">KONNECT</span>
+  <span class="sep">|</span>
+  <span>Internal Reference</span>
+  <span class="sep">·</span>
+  <span class="badge">GPON Bot Guide</span>
+</div>
+
+<div class="hero">
+  <div class="label">// Diagnostic workflow for KONNECT staff agents //</div>
+  <h1>GPON Monitoring Bot<br>User Guide</h1>
+  <div class="subtitle">How to use the bot, interpret results, and take the right action.</div>
+</div>
+
+<div class="main">
+
+  <!-- OVERVIEW -->
+  <section>
+    <div class="section-title">Overview</div>
+    <p>The <strong>GPON Monitoring Bot</strong> is available in your Lark group chat. It allows KONNECT Staff agents to instantly retrieve network diagnostics for any customer — including ONU/ONT status, RX signal power, building status, cluster status, and customer details — without needing to escalate to TechOps first.</p>
+    <p>Use this guide to understand <strong>what the bot returns</strong>, how to <strong>interpret the results</strong>, and what <strong>action to take</strong> for each scenario.</p>
+  </section>
+
+  <!-- HOW TO USE -->
+  <section>
+    <div class="section-title">How to Use the Bot</div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">📱</span>
+        <span class="card-title">Trigger by Client Number <span class="new-badge">Primary</span></span>
+      </div>
+      <div class="code-block">@GPON [CLIENT_NUMBER]</div>
+      <p>Tag the bot with a customer's phone number (e.g. <code style="color:#7dd3fc">254790275765</code>). The bot will look up the customer's ONU and return their full connection status, including Building Status and Cluster Status.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">🏢</span>
+        <span class="card-title">Trigger by Building Code</span>
+      </div>
+      <div class="code-block">@GPON [BUILDING_CODE]</div>
+      <p>Use this to check the status of an entire building and view all ONUs and their RX power readings. Useful for confirming whether a fault is building-wide. Replace <strong>[BUILDING_CODE]</strong> with the building code (e.g. <code style="color:#7dd3fc">KENKK05317</code>).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">📡</span>
+        <span class="card-title">Trigger by ONU Serial Number</span>
+      </div>
+      <div class="code-block">@GPON [ONU_SERIAL]</div>
+      <p>Use this to check a specific ONU directly by serial number (e.g. <code style="color:#7dd3fc">HWTC:F31096B6</code>).</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <div class="section-title">Frequently Asked Questions</div>
+
+    <!-- Q1 -->
+    <div class="faq-item">
+      <div class="faq-q">
+        <span class="q-badge">Q1</span>
+        What does the bot return when I query a client number?
+      </div>
+      <div class="faq-a">
+        <p>Tagging the bot with a client phone number returns a full customer report. Here is what each field means:</p>
+        <table>
+          <thead><tr><th>Field</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">ONU Status</td><td><span class="status-online">ONLINE 🟢</span> or <span class="status-offline">OFFLINE 🔴</span> — whether the customer's ONU is currently connected</td></tr>
+            <tr><td class="field-name">Serial</td><td>The ONU serial number (e.g. HWTC:F31096B6)</td></tr>
+            <tr><td class="field-name">RX Power</td><td>Received signal power in dBm — key for diagnosing LOS (Loss of Signal) issues</td></tr>
+            <tr><td class="field-name">Region</td><td>The region code for the customer (e.g. G45S, MWKS)</td></tr>
+            <tr><td class="field-name">Cluster</td><td>The cluster name the customer belongs to</td></tr>
+            <tr><td class="field-name">Building</td><td>Building name and code (e.g. Solid Rock – KEKRG61143)</td></tr>
+            <tr><td class="field-name">OLT / Port</td><td>The OLT IP address and GPON port the ONU is connected to</td></tr>
+            <tr><td class="field-name">Segment</td><td>Customer segment (e.g. N/A, Residential, Business)</td></tr>
+            <tr><td class="field-name">Contact</td><td>Customer name and phone number</td></tr>
+            <tr><td class="field-name">Last Seen</td><td>Timestamp of when the ONU was last seen online</td></tr>
+            <tr><td class="field-name">Building Status</td><td><span class="status-online">ONLINE 🟢</span> or <span class="status-offline">OFFLINE 🔴</span> — whether the building has connectivity</td></tr>
+            <tr><td class="field-name">Cluster Status</td><td><span class="status-online">ONLINE 🟢</span> or <span class="status-offline">OFFLINE 🔴</span> — whether the customer's cluster is up</td></tr>
+          </tbody>
+        </table>
+
+        <p style="margin-top:16px; margin-bottom:8px;"><strong style="color:#fff">Example 1 — ONU OFFLINE, Building &amp; Cluster ONLINE:</strong></p>
+        <div class="mock-response">
+          <div class="mock-header">
+            <div class="dot dot-yellow"></div><div class="dot dot-green"></div><div class="dot dot-green"></div>
+            Bot Response — ONU Offline
+          </div>
+          <div class="mock-body">
+            <div><span class="at-mention">@Florine Kathure</span></div>
+            <div><span class="onu-offline">ONU is OFFLINE 🔴</span></div>
+            <div><span class="field-key">Serial: </span><span class="field-val">HWTC:F31096B6</span></div>
+            <div><span class="field-key">RX Power: </span><span class="field-val">-18.0 dBm</span></div>
+            <div><span class="field-key">Region: </span><span class="field-val">G45S</span></div>
+            <div><span class="field-key">Cluster: </span><span class="field-val">Mutaratara</span></div>
+            <div><span class="field-key">Building: </span><span class="field-val">Solid Rock (KEKRG61143)</span></div>
+            <div><span class="field-key">OLT: </span><span style="color:#60a5fa">10.139.0.2</span><span class="field-key"> | Port: </span><span class="field-val">GPON 0/2</span></div>
+            <div><span class="field-key">Segment: </span><span class="field-val">N/A</span></div>
+            <div><span class="field-key">Contact: </span><span class="field-val">Emmanuel | 254790275765</span></div>
+            <div><span class="field-key">Last Seen: </span><span class="field-val">2026-04-22 10:42:18 EAT</span></div>
+            <div class="status-line">
+              <div><span class="field-key">Building Status: </span><span class="onu-online">🟢 ONLINE</span></div>
+              <div><span class="field-key">Cluster Status: </span><span class="onu-online">🟢 ONLINE</span></div>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top:16px; margin-bottom:8px;"><strong style="color:#fff">Example 2 — ONU ONLINE, Building &amp; Cluster ONLINE:</strong></p>
+        <div class="mock-response">
+          <div class="mock-header">
+            <div class="dot dot-green"></div><div class="dot dot-green"></div><div class="dot dot-green"></div>
+            Bot Response — ONU Online
+          </div>
+          <div class="mock-body">
+            <div><span class="at-mention">@Brian Mworia</span></div>
+            <div><span class="onu-online">ONU is ONLINE 🟢</span></div>
+            <div><span class="field-key">Serial: </span><span class="field-val">Ahdi:49D26490</span></div>
+            <div><span class="field-key">RX Power: </span><span class="field-val" style="color:var(--orange)">-28.9 dBm</span></div>
+            <div><span class="field-key">Region: </span><span class="field-val">MWKS</span></div>
+            <div><span class="field-key">Cluster: </span><span class="field-val">Yellow Mwk</span></div>
+            <div><span class="field-key">Building: </span><span class="field-val">Yellow Mwk (KENKM04066)</span></div>
+            <div><span class="field-key">OLT: </span><span style="color:#60a5fa">10.108.0.3</span><span class="field-key"> | Port: </span><span class="field-val">GPON0/15:31</span></div>
+            <div><span class="field-key">Segment: </span><span class="field-val">N/A</span></div>
+            <div><span class="field-key">Contact: </span><span class="field-val">Regina | 254105783803</span></div>
+            <div class="status-line">
+              <div><span class="field-key">Building Status: </span><span class="onu-online">🟢 ONLINE</span></div>
+              <div><span class="field-key">Cluster Status: </span><span class="onu-online">🟢 ONLINE</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <strong>Note:</strong> In Example 2, the ONU is ONLINE but the RX Power is -28.9 dBm — which is below the acceptable range. Even when the ONU shows as online, always check RX Power for signal quality issues.
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="faq-item">
+      <div class="faq-q">
+        <span class="q-badge">Q2</span>
+        What does the bot return when I check a building's status?
+      </div>
+      <div class="faq-a">
+        <p>Querying a building code returns a full building report showing all ONUs in that building along with their RX power readings. Here is what each field means:</p>
+        <table>
+          <thead><tr><th>Field</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td class="field-name">Building Status</td><td><span class="status-online">ONLINE 🟢</span> or <span class="status-offline">OFFLINE 🔴</span></td></tr>
+            <tr><td class="field-name">Region | Code</td><td>Region name and building code</td></tr>
+            <tr><td class="field-name">Building | Cluster</td><td>Building name and the cluster it belongs to</td></tr>
+            <tr><td class="field-name">Timestamp</td><td>Date and time of the check</td></tr>
+            <tr><td class="field-name">Online 🟢</td><td>Count of ONUs currently online</td></tr>
+            <tr><td class="field-name">Offline 🔴</td><td>Count of ONUs currently offline</td></tr>
+            <tr><td class="field-name">Archived 📦</td><td>Count of archived/inactive ONUs</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:10px;">Each ONU is listed with its serial number, status, RX power, segment, OLT, and port. Use this view to identify whether a high LOS fault is isolated to one customer or affecting the entire building.</p>
+        <div class="alert alert-tip" style="margin-top:12px;">
+          <strong>Tip:</strong> If you identify that the whole building is experiencing high LOS, tag TechOps to investigate the OLT port, cluster, or fibre infrastructure for that building.
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="faq-item">
+      <div class="faq-q">
+        <span class="q-badge">Q3</span>
+        What does RX Power tell me?
+      </div>
+      <div class="faq-a">
+        <p>RX Power (Received Signal Power) is measured in <strong>dBm</strong> and indicates the strength of the optical signal at the ONU. Always note this value when diagnosing a fault — it tells you whether the issue is a physical/fibre fault or something else.</p>
+        <table>
+          <thead><tr><th>RX Power Range</th><th>Signal Quality</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>-8 to -24 dBm</td><td style="color:var(--green)">✅ Normal</td><td>Signal within acceptable range</td></tr>
+            <tr><td>-25 to -27 dBm</td><td style="color:var(--orange)">⚠️ Weak</td><td>Signal degrading — monitor closely</td></tr>
+            <tr><td>Below -27 dBm</td><td style="color:var(--red)">❌ High LOS</td><td>Significant loss — likely a fibre or physical fault</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-warning" style="margin-top:14px;">
+          <strong>Important:</strong> An ONU can be ONLINE but still have a critically low RX Power. Always check RX Power regardless of whether the ONU is online or offline.
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ACTION WORKFLOW -->
+  <section>
+    <div class="section-title">Action Workflow — What to Do With the Results</div>
+    <p style="margin-bottom:20px;">Once you receive the bot response for a client, follow the workflow for the relevant scenario below.</p>
+
+    <!-- SCENARIO A: ONU OFFLINE -->
+    <div class="faq-item" style="margin-bottom:16px;">
+      <div class="faq-q" style="background:rgba(239,68,68,0.1); border-bottom:1px solid rgba(239,68,68,0.2);">
+        <span class="q-badge" style="background:var(--red);">SCENARIO A</span>
+        ONU is OFFLINE 🔴
+      </div>
+      <div class="faq-a">
+        <div class="steps">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Check Building Status &amp; Cluster Status</strong>
+              <p>Look at the two status lines at the bottom of the bot response. This tells you immediately whether the fault is isolated to the customer or part of a wider outage.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Building &amp; Cluster = ONLINE 🟢 → Isolated fault</strong>
+              <p>Raise a ticket for the ONU. In the ticket, include the RX Power value and indicate whether the ONU went offline with <em>high LOS</em> (below -27 dBm) or with a normal signal. This helps the field team determine the right type of investigation.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>RX Power shows High LOS → GPON the building</strong>
+              <p>Tag the bot with the building code (<code style="color:#7dd3fc">@GPON [BUILDING_CODE]</code>) to check the RX power of all other ONUs in the building. If the entire building is showing high LOS, escalate to TechOps — the fault may be at the cluster, OLT port, or fibre level.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Building or Cluster = OFFLINE 🔴 → Wider outage</strong>
+              <p>Do not ticket the individual ONU. Escalate to TechOps as a wider outage and inform the customer that their area is currently affected.</p>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <strong>When ticketing an ONU:</strong> Always include the RX Power value and state clearly whether the ONU went offline with high LOS (below -27 dBm) or normal signal. This directly determines the type of field investigation required.
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENARIO B: ONU ONLINE, CUSTOMER HAS ISSUE -->
+    <div class="faq-item" style="margin-bottom:16px;">
+      <div class="faq-q" style="background:rgba(34,197,94,0.08); border-bottom:1px solid rgba(34,197,94,0.2);">
+        <span class="q-badge" style="background:var(--green); color:#000;">SCENARIO B</span>
+        ONU is ONLINE 🟢 — but customer reports a problem
+      </div>
+      <div class="faq-a">
+        <div class="steps">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Check RX Power</strong>
+              <p>Even though the ONU is online, check whether the RX Power is within the acceptable range (-8 to -24 dBm). A degraded signal can cause intermittent issues even when the ONU is showing as online.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>RX Power is normal (not critical) → Tag TechOps</strong>
+              <p>The ONU and signal are fine. Tag the TechOps team for further investigation, clearly describing the problem the customer is experiencing (e.g. slow speeds, packet loss, intermittent drops). The fault is likely at the router, CPE, or configuration level.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>RX Power is weak or below acceptable range → GPON the building</strong>
+              <p>Tag the bot with the building code to check whether other ONUs in the same building are also showing degraded RX power. If the building-wide signal is poor, tag TechOps to investigate the OLT port, cluster, or fibre infrastructure.</p>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <strong>Tip:</strong> When tagging TechOps, always include the customer name, contact number, building code, OLT/Port details, and a brief description of the reported issue. The more context you provide, the faster the issue can be resolved.
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK REFERENCE TABLE -->
+    <div class="section-title" style="margin-top:32px;">Quick Reference Summary</div>
+    <table>
+      <thead>
+        <tr>
+          <th>ONU Status</th>
+          <th>Building / Cluster</th>
+          <th>RX Power</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="status-offline">OFFLINE 🔴</span></td>
+          <td><span class="status-online">ONLINE 🟢</span></td>
+          <td>Normal (-8 to -24)</td>
+          <td>Ticket the ONU — note RX Power, likely device or power fault</td>
+        </tr>
+        <tr>
+          <td><span class="status-offline">OFFLINE 🔴</span></td>
+          <td><span class="status-online">ONLINE 🟢</span></td>
+          <td>High LOS (&lt;-27 dBm)</td>
+          <td>Ticket the ONU &amp; GPON building — escalate to TechOps if building-wide high LOS</td>
+        </tr>
+        <tr>
+          <td><span class="status-offline">OFFLINE 🔴</span></td>
+          <td><span class="status-offline">OFFLINE 🔴</span></td>
+          <td>Any</td>
+          <td>Wider outage — escalate to TechOps, inform the customer</td>
+        </tr>
+        <tr>
+          <td><span class="status-online">ONLINE 🟢</span></td>
+          <td><span class="status-online">ONLINE 🟢</span></td>
+          <td>Normal (-8 to -24)</td>
+          <td>Tag TechOps with customer issue details — fault likely at router/CPE level</td>
+        </tr>
+        <tr>
+          <td><span class="status-online">ONLINE 🟢</span></td>
+          <td><span class="status-online">ONLINE 🟢</span></td>
+          <td>Weak / High LOS</td>
+          <td>GPON building to check building-wide signal — escalate to TechOps if widespread</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </section>
+
+</div>
+</body>
+</html>
